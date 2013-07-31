@@ -9,6 +9,7 @@ update.df <- function(df){
                        geocode="44.96,-93.2117,11mi", since_id=max.id)
   if(nrow(new.df) > 0){
     new.df <- add.cols(new.df)
+    new.df <- data.frame(rbind(new.df, df))
   }else{
     new.df <- df
   }
