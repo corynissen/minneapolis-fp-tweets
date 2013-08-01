@@ -3,6 +3,7 @@ library(stringr)
 library(RCurl)
 library(RJSONIO)
 library(digest)
+library(reshape2)
  
 # Download the certificate needed for authentication
 if (!file.exists('cacert.perm')){
@@ -91,27 +92,31 @@ twitter_search = function(term, count = 100, geocode="41.8607,-87.6408,16mi",
   result <- getURI(uri, .opts = .opts, httpheader = authHeader)
   result <- fromJSON(str_match_all(result, '\\r\\n\\r\\n(\\{.+)')[[1]][1,2])
 
-   df <- data.frame(user.name=sapply(sapply(result$statuses, "[", "user"),
-                        "[[", "name"))
-  df$user.id <- sapply(sapply(result$statuses, "[", "user"), "[[", "id_str")
-  df$user.screen.name <- sapply(sapply(result$statuses, "[", "user"),
-                                "[[", "screen_name")
-  df$user.location <- sapply(sapply(result$statuses, "[", "user"),
-                             "[[", "location")
-  df$user.description <- sapply(sapply(result$statuses, "[", "user"),
-                                "[[", "description")
-  df$user.followers.count <- sapply(sapply(result$statuses, "[", "user"),
-                                    "[[", "followers_count")
-  df$user.friends.count <- sapply(sapply(result$statuses, "[", "user"),
-                                  "[[", "friends.count")
+  df <- data.frame(user.name=as.character(sapply(sapply(result$statuses, "[",
+                        "user"), "[[", "name")), stringsAsFactors=F)
+  df$user.id <- as.character(sapply(sapply(result$statuses, "[", "user"), "[[",
+                                    "id_str"))
+  df$user.screen.name <- as.character(sapply(sapply(result$statuses, "[",
+                           "user"), "[[", "screen_name"))
+  df$user.location <-as.character( sapply(sapply(result$statuses, "[", "user"),
+                             "[[", "location"))
+  df$user.description <- as.character(sapply(sapply(result$statuses, "[",
+                           "user"), "[[", "description"))
+  df$user.followers.count <- as.character(sapply(sapply(result$statuses, "[",
+                               "user"), "[[", "followers_count"))
+  df$user.friends.count <- as.character(sapply(sapply(result$statuses, "[",
+                             "user"), "[[", "friends.count"))
  
-  df$geo <- sapply(result$statuses, "[[", "geo")
-  df$coordinates <- sapply(result$statuses, "[[", "coordinates")
-  df$place <- sapply(result$statuses, "[[", "place")
-  df$status.id <- sapply(result$statuses, "[[", "id_str")
-  df$text <- sapply(result$statuses, "[[", "text")
-  df$created.at <- sapply(result$statuses, "[[", "created_at")
-  
+  df$geo <- as.character(sapply(result$statuses, "[[", "geo"))
+  df$coordinates <- as.character(sapply(result$statuses, "[[", "coordinates"))
+  df$place <- as.character(sapply(result$statuses, "[[", "place"))
+  df$status.id <- as.character(sapply(result$statuses, "[[", "id_str"))
+  df$text <- as.character(sapply(result$statuses, "[[", "text"))
+  df$created.at <- as.character(sapply(result$statuses, "[[", "created_at"))
+
+  # convert to long format just incase we want to add cols later...
+  df <- melt(df, id.vars="status.id")
+
   return(df)
 }
 
