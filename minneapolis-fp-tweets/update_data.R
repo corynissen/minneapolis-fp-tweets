@@ -26,7 +26,7 @@ add.cols <- function(df){
   fp.url <- "http://174.129.49.183/cgi-bin/R/fp_classifier?text="
   df$classification <- sapply(df$text,
                          function(x)getURI(paste0(fp.url,
-                           curlPercentEncode(x))))
+                           curlPercentEncode(iconv(x, "", "ASCII", "")))))
   df$classification <- ifelse(df$classification=="food poisoning tweet\n",
                               "Good", "Junk")
   df$status.link <- paste0('<a href="https://twitter.com/', df$user.screen.name,
