@@ -32,10 +32,11 @@ add.cols <- function(df){
   df$classification <- sapply(df$text,
                          function(x)getURI(paste0(fp.url,
                            curlPercentEncode(iconv(x, "", "ASCII", "")))))
-  df$classification <- as.character(ifelse(df$classification=="food poisoning tweet\n",
-                              "Good", "Junk"))
+  df$classification <- as.character(ifelse(df$classification==
+                         "food poisoning tweet\n", "Good", "Junk"))
   df$status.link <- paste0('<a href="https://twitter.com/', df$user.screen.name,
-                           '/status/', df$status.id, '" target="_blank">View on Twitter</a>')
+                           '/status/', df$status.id,
+                           '" target="_blank">View on Twitter</a>')
   df$created.at2 <- as.character(df$created.at2)
   df <- melt(df, id.vars="status.id")
   return(df)
