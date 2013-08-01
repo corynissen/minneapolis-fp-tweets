@@ -95,7 +95,7 @@ twitter_search = function(term, count = 100, geocode="41.8607,-87.6408,16mi",
                         "[[", "name"))
   df$user.id <- sapply(sapply(result$statuses, "[", "user"), "[[", "id_str")
   df$user.screen.name <- sapply(sapply(result$statuses, "[", "user"),
-                                "[[", "screen.name")
+                                "[[", "screen_name")
   df$user.location <- sapply(sapply(result$statuses, "[", "user"),
                              "[[", "location")
   df$user.description <- sapply(sapply(result$statuses, "[", "user"),
