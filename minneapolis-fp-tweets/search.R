@@ -1,4 +1,4 @@
-# Initialization
+
 library(stringr)
 library(RCurl)
 library(RJSONIO)
@@ -91,32 +91,19 @@ twitter_search = function(term, count = 100, geocode="41.8607,-87.6408,16mi",
   result <- getURI(uri, .opts = .opts, httpheader = authHeader)
   result <- fromJSON(str_match_all(result, '\\r\\n\\r\\n(\\{.+)')[[1]][1,2])
 
-  #if(length(result$statuses)==1){
-  #  user <- sapply(result$statuses, "[[", "user")
-  #  df <- data.frame(user.name=user[rownames(user)=="name"][[1]])
-  #  df$user.id <- user[rownames(user)=="id_str"][[1]]
-  #  df$user.screen.name <- user[rownames(user)=="screen.name"][[1]]
-  #  df$user.location <- user[rownames(user)=="location"][[1]]
-  #  df$user.description <- user[rownames(user)=="description"][[1]]
-  #  df$user.followers.count <- user[rownames(user)=="followers.count"][[1]]
-  #  df$user.friends.count <- user[rownames(user)=="friends.count"][[1]]
-
-  # this only works if there are zero or >1 statuses...
-  #user <- sapply(result$statuses, "[[", "user")
-  #df <- data.frame(user.name=sapply(user, "[[", "name"))
-  #df$user.id <- sapply(user, "[[", "id_str")
-  #df$user.screen.name <- sapply(user, "[[", "screen.name")
-  #df$user.location <- sapply(user, "[[", "location")
-  #df$user.description <- sapply(user, "[[", "description")
-  #df$user.followers.count <- sapply(user, "[[", "followers_count")
-  #df$user.friends.count <- sapply(user, "[[", "friends.count")
-  df <- data.frame(user.name=sapply(sapply(result$statuses, "[", "user"), "[[", "name"))
+   df <- data.frame(user.name=sapply(sapply(result$statuses, "[", "user"),
+                        "[[", "name"))
   df$user.id <- sapply(sapply(result$statuses, "[", "user"), "[[", "id_str")
-  df$user.screen.name <- sapply(sapply(result$statuses, "[", "user"), "[[", "screen.name")
-  df$user.location <- sapply(sapply(result$statuses, "[", "user"), "[[", "location")
-  df$user.description <- sapply(sapply(result$statuses, "[", "user"), "[[", "description")
-  df$user.followers.count <- sapply(sapply(result$statuses, "[", "user"), "[[", "followers_count")
-  df$user.friends.count <- sapply(sapply(result$statuses, "[", "user"), "[[", "friends.count")
+  df$user.screen.name <- sapply(sapply(result$statuses, "[", "user"),
+                                "[[", "screen.name")
+  df$user.location <- sapply(sapply(result$statuses, "[", "user"),
+                             "[[", "location")
+  df$user.description <- sapply(sapply(result$statuses, "[", "user"),
+                                "[[", "description")
+  df$user.followers.count <- sapply(sapply(result$statuses, "[", "user"),
+                                    "[[", "followers_count")
+  df$user.friends.count <- sapply(sapply(result$statuses, "[", "user"),
+                                  "[[", "friends.count")
  
   df$geo <- sapply(result$statuses, "[[", "geo")
   df$coordinates <- sapply(result$statuses, "[[", "coordinates")
