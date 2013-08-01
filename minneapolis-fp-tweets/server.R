@@ -69,7 +69,9 @@ shinyServer(function(input, output) {
 
   output$tweet.table <- renderTable({
       df <- subset.data()
-      tab <- subset(df, select=c("text", "classification", "created.at"))      
-  },include.rownames=FALSE)
+      tab <- subset(df, select=c("text", "classification", "created.at",
+                            "status.link"))
+      
+  },include.rownames=FALSE, sanitize.text.function = function(x) x)
       
 })
