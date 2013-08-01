@@ -1,5 +1,6 @@
 
 library(lubridate)
+library(reshape2)
 
 source("search.R")
 
@@ -17,20 +18,23 @@ update.df <- function(df){
 }
 
 add.cols <- function(df){
-  df$text <- iconv(df$text, "WINDOWS-1252", "UTF-8", "")
-  df$created.at2 <- gsub("\\+0000 ", "", df$created.at)
+  df <- dcast(df, status.id ~ variable, value.var="value")
+  df$text <- as.character(iconv(df$text, "WINDOWS-1252", "UTF-8", ""))
+  df$created.at2 <- as.character(gsub("\\+0000 ", "", df$created.at))
   df$created.at2 <- parse_date_time(substring(df$created.at2, 5,
                       nchar(df$created.at2)), "%b %d %H:%M:%S %Y")
-  df$epoch <- as.numeric(seconds(df$created.at2))
-  df$is.rt <- grepl("^RT| RT @", df$text)
+  df$epoch <- as.character(as.numeric(seconds(df$created.at2)))
+  df$is.rt <- as.character(grepl("^RT| RT @", df$text))
   fp.url <- "http://174.129.49.183/cgi-bin/R/fp_classifier?text="
   df$classification <- sapply(df$text,
                          function(x)getURI(paste0(fp.url,
                            curlPercentEncode(iconv(x, "", "ASCII", "")))))
-  df$classification <- ifelse(df$classification=="food poisoning tweet\n",
-                              "Good", "Junk")
+  df$classification <- as.character(ifelse(df$classification=="food poisoning tweet\n",
+                              "Good", "Junk"))
   df$status.link <- paste0('<a href="https://twitter.com/', df$user.screen.name,
                            '/status/', df$status.id, '" target="_blank">View on Twitter</a>')
+  df$created.at2 <- as.character(df$created.at2)
+  df <- melt(df, id.vars="status.id")
   return(df)
 }
 
