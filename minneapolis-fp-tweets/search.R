@@ -116,6 +116,7 @@ twitter_search = function(term, count = 100, geocode="41.8607,-87.6408,16mi",
 
   # convert to long format just incase we want to add cols later...
   df <- melt(df, id.vars="status.id")
+  # df <- dcast(df, status.id ~ variable, value.var="value") to get back
 
   return(df)
 }
