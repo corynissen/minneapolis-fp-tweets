@@ -17,7 +17,7 @@ update.df <- function(df){
 }
 
 add.cols <- function(df){
-  df$text <- iconv(df$text, "WINDOWS-1252", "UTF-8")
+  df$text <- iconv(df$text, "WINDOWS-1252", "UTF-8", "")
   df$created.at2 <- gsub("\\+0000 ", "", df$created.at)
   df$created.at2 <- parse_date_time(substring(df$created.at2, 5,
                       nchar(df$created.at2)), "%b %d %H:%M:%S %Y")
@@ -29,6 +29,8 @@ add.cols <- function(df){
                            curlPercentEncode(x))))
   df$classification <- ifelse(df$classification=="food poisoning tweet\n",
                               "Good", "Junk")
+  df$status.link <- paste0('<a href="https://twitter.com/', df$user.screen.name,
+                           '/status/', df$status.id, '" target="_blank">View on Twitter</a>')
   return(df)
 }
 
