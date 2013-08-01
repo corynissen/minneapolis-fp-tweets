@@ -1,17 +1,22 @@
 
 library(shiny)
 library(lubridate)
-
-#source("update_data.R")  # df is all the data
-load("minneapolis_fp.Rdata")
+library(reshape2)
 
 shinyServer(function(input, output) {
+  #source("update_data.R")  # df is all the data
+  load("minneapolis_fp.Rdata")
+  df <- dcast(df, status.id ~ variable, value.var="value")
+  df$is.rt <- as.logical(df$is.rt)
+  df$epoch <- as.numeric(df$epoch)
+  df$created.at3 <- as.Date(df$created.at2)
 
   data <- reactive({    
     if(input$refresh > 0){
       isolate({
         source("update_data.R")
         load("minneapolis_fp.Rdata")
+        df <- dcast(df, status.id ~ variable, value.var="value")
       })
     }
     df <- df[order(df$epoch, decreasing=TRUE),]
@@ -29,16 +34,16 @@ shinyServer(function(input, output) {
   # had to subset the data after the slider was created
   subset.data <- reactive({
     df <- data()
-    max.date <- max(df$created.at2)
-    df <- subset(df, created.at2 >= max.date-days(input$day.slider.reactive))
+    max.date <- max(df$created.at3)
+    df <- subset(df, created.at3 >= max.date-days(input$day.slider.reactive))
     df
   })
 
   # create the slider here because I need input from the df dataframe
   output$day.slider <- renderUI({
     df <- data()
-    min.date <- min(df$created.at2)
-    max.date <- max(df$created.at2)
+    min.date <- min(df$created.at3)
+    max.date <- max(df$created.at3)
     max.value <- ceiling(as.numeric((max.date - min.date)))
     #browser()
     return(sliderInput("day.slider.reactive", "Date range (back from present)",
