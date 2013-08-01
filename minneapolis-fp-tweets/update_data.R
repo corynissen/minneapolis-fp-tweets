@@ -5,7 +5,10 @@ library(reshape2)
 source("search.R")
 
 update.df <- function(df){
+  df <- dcast(df, status.id ~ variable, value.var="value")
+  df$epoch <- as.numeric(df$epoch)
   max.id <- df$status.id[df$epoch==max(df$epoch)]
+  df <- melt(df, id.vars="status.id")
   new.df <- twitter_search("food poisoning", count=100,
                        geocode="44.96,-93.2117,11mi", since_id=max.id)
   if(nrow(new.df) > 0){
